@@ -20,7 +20,9 @@ MY_WORKDIR="${WORKDIR}/omrdecoder-bin-linux-Ubuntu_gutsy_(development_branch)-v$
 src_install() {
 	dodoc "${MY_WORKDIR}/README.OMR"
 	insinto "${DESTTREE}/share/${PN}"
-	doins "${MY_WORKDIR}"/{decoder.glade,omrdecoder,omrdecoder-gui}
+	doins "${MY_WORKDIR}"/decoder.glade
+	insopts -m0755
+	doins "${MY_WORKDIR}"/{omrdecoder,omrdecoder-gui}
 	dosym "${INSDESTTREE}"/omrdecoder "${DESTTREE}"/bin/
 	dosym "${INSDESTTREE}"/omrdecoder-gui "${DESTTREE}"/bin/
 }
