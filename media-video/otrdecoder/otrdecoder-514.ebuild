@@ -4,7 +4,7 @@
 
 DESCRIPTION="OTR key file decoder"
 HOMEPAGE="http://www.onlinetvrecorder.com/"
-SRC_URI="http://www.onlinetvrecorder.com/downloads/otrdecoder-bin-linux-Ubuntu_hardy_%28development_branch%29-i686-v${PV}.tar.bz2"
+SRC_URI="http://www.onlinetvrecorder.com/downloads/otrdecoder-bin-linux-static-v${PV}.tar.bz2"
 
 LICENSE=""
 RESTRICT="nomirror"
@@ -15,7 +15,7 @@ IUSE=""
 DEPEND=""
 RDEPEND=""
 
-MY_WORKDIR="${WORKDIR}/otrdecoder-bin-linux-Ubuntu_hardy_(development_branch)-i686-v${PV}"
+MY_WORKDIR="${WORKDIR}/otrdecoder-bin-linux-static-v${PV}"
 
 src_install() {
 	dodoc "${MY_WORKDIR}/README.OTR"
