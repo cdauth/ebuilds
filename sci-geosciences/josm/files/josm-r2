@@ -1,0 +1,5 @@
+#!/bin/sh
+
+gjl_package=josm
+gjl_jar="josm.jar"
+source /usr/share/java-config-2/launcher/launcher.bash

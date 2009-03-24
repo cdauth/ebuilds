@@ -23,7 +23,7 @@ src_install() {
 	# Using the eclass doesn't let us support the http_proxy var,
 	# so we're using our own startscript for now.
 	#java-pkg_dolauncher "${PN}" --jar "${PN}.jar"
-	newbin "${FILESDIR}/${PN}-r1" "${PN}" || die "dobin failed"
+	newbin "${FILESDIR}/${PN}-r2" "${PN}" || die "dobin failed"
 
 	doicon "${FILESDIR}/josm.png" || die "doicon failed"
 	make_desktop_entry "${PN}" "Java OpenStreetMap Editor" josm "Application"
