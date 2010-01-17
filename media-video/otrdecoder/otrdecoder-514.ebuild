@@ -9,7 +9,7 @@ SRC_URI="http://www.onlinetvrecorder.com/downloads/otrdecoder-bin-linux-static-v
 LICENSE=""
 RESTRICT="nomirror"
 SLOT="0"
-KEYWORDS="~x86"
+KEYWORDS="~amd64 ~x86"
 IUSE=""
 
 DEPEND=""
