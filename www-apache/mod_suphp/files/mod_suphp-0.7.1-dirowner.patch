@@ -1,0 +1,18 @@
+diff -ur ../suphp-0.7.1.old/src/Application.cpp ./src/Application.cpp
+--- ../suphp-0.7.1.old/src/Application.cpp	2010-01-26 22:30:14.000000000 +0100
++++ ./src/Application.cpp	2010-01-26 22:31:31.000000000 +0100
+@@ -548,12 +548,14 @@
+         directory = directory.getParentDirectory();
+ 
+         UserInfo directoryOwner = directory.getUser();
++#ifndef OPT_USERGROUP_OWNER
+         if (directoryOwner != owner && !directoryOwner.isSuperUser()) {
+             std::string error = "Directory " + directory.getPath()
+                 + " is not owned by " + owner.getUsername();
+             logger.logWarning(error);
+             throw SoftException(error, __FILE__, __LINE__);
+         }
++#endif
+ 
+         if (!directory.isSymlink()
+             && !config.getAllowDirectoryGroupWriteable()
