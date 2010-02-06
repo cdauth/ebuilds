@@ -1,13 +1,14 @@
 diff -Nabur suphp-0.7.1.orig/doc/CONFIG suphp-0.7.1.symlinkpatch/doc/CONFIG
 --- suphp-0.7.1.orig/doc/CONFIG	2008-03-31 02:15:54.000000000 +0200
-+++ suphp-0.7.1.symlinkpatch/doc/CONFIG	2010-02-06 22:30:39.000000000 +0100
-@@ -109,6 +109,11 @@
++++ suphp-0.7.1.symlinkpatch/doc/CONFIG	2010-02-07 00:27:25.000000000 +0100
+@@ -109,6 +109,12 @@
    "--disable-check-docroot" option has been specified, otherwise it is
    enabled by default.
  
 +check_symlink_ownership:
 +  Checks whether the owner UID and GID of a symbolic link match the owner
-+  UID and GID of the target file.
++  UID and GID of the target file. If this is disabled, scripts will always
++  be run under the owner of the symbolic link.
 +  Is enabled by default.
 +
  errors_to_browser:
