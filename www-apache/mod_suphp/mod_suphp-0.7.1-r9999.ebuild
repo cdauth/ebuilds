@@ -51,6 +51,7 @@ src_unpack() {
 	unpack "${A}"
 	cd "${S}"
 	epatch "${FILESDIR}/${P}-parent-directory-ownership.patch"
+	epatch "${FILESDIR}/${P}-check-symlink.patch"
 }
 
 src_configure() {
