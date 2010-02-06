@@ -13,14 +13,14 @@ diff -Nabur suphp-0.7.1.orig/doc/CONFIG suphp-0.7.1/doc/CONFIG
    webserver. This option is intended to avoid symbol links outside of the
 diff -Nabur suphp-0.7.1.orig/src/Application.cpp suphp-0.7.1/src/Application.cpp
 --- suphp-0.7.1.orig/src/Application.cpp	2009-03-14 18:55:25.000000000 +0100
-+++ suphp-0.7.1/src/Application.cpp	2010-02-06 22:04:44.000000000 +0100
++++ suphp-0.7.1/src/Application.cpp	2010-02-06 22:08:05.000000000 +0100
 @@ -548,7 +548,9 @@
          directory = directory.getParentDirectory();
  
          UserInfo directoryOwner = directory.getUser();
 -        if (directoryOwner != owner && !directoryOwner.isSuperUser()) {
 +        if (directoryOwner != owner
-+            && !config.getCheckAllParentDirectoryOwnership()
++            && config.getCheckAllParentDirectoryOwnership()
 +            && !directoryOwner.isSuperUser()) {
              std::string error = "Directory " + directory.getPath()
                  + " is not owned by " + owner.getUsername();
