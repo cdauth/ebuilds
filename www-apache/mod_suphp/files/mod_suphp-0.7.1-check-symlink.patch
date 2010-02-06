@@ -1,83 +1,85 @@
-diff -Nabur suphp-0.7.1.orig/doc/CONFIG suphp-0.7.1/doc/CONFIG
+diff -Nabur suphp-0.7.1.orig/doc/CONFIG suphp-0.7.1.symlinkpatch/doc/CONFIG
 --- suphp-0.7.1.orig/doc/CONFIG	2008-03-31 02:15:54.000000000 +0200
-+++ suphp-0.7.1/doc/CONFIG	2010-02-06 21:02:32.000000000 +0100
-@@ -100,6 +100,9 @@
-   Is disabled by default:
-   WARNING: Enabling this option is dangerous!
++++ suphp-0.7.1.symlinkpatch/doc/CONFIG	2010-02-06 22:30:39.000000000 +0100
+@@ -109,6 +109,11 @@
+   "--disable-check-docroot" option has been specified, otherwise it is
+   enabled by default.
  
-+check_all_parent_directory_ownership:
-+  Disable checking directory ownership beyond the parent of the script.
++check_symlink_ownership:
++  Checks whether the owner UID and GID of a symbolic link match the owner
++  UID and GID of the target file.
++  Is enabled by default.
 +
- check_vhost_docroot:
-   Checks wheter the script is within DOCUMENT_ROOT specified by the 
-   webserver. This option is intended to avoid symbol links outside of the
-diff -Nabur suphp-0.7.1.orig/src/Application.cpp suphp-0.7.1/src/Application.cpp
+ errors_to_browser:
+   Enable this option to sent information about minor problems during script
+   invocation to the browser. This option is disabled by default.
+diff -Nabur suphp-0.7.1.orig/src/Application.cpp suphp-0.7.1.symlinkpatch/src/Application.cpp
 --- suphp-0.7.1.orig/src/Application.cpp	2009-03-14 18:55:25.000000000 +0100
-+++ suphp-0.7.1/src/Application.cpp	2010-02-06 22:08:05.000000000 +0100
-@@ -548,7 +548,9 @@
-         directory = directory.getParentDirectory();
++++ suphp-0.7.1.symlinkpatch/src/Application.cpp	2010-02-06 22:28:19.000000000 +0100
+@@ -258,8 +258,9 @@
+     }
  
-         UserInfo directoryOwner = directory.getUser();
--        if (directoryOwner != owner && !directoryOwner.isSuperUser()) {
-+        if (directoryOwner != owner
-+            && config.getCheckAllParentDirectoryOwnership()
-+            && !directoryOwner.isSuperUser()) {
-             std::string error = "Directory " + directory.getPath()
-                 + " is not owned by " + owner.getUsername();
-             logger.logWarning(error);
-diff -Nabur suphp-0.7.1.orig/src/Configuration.cpp suphp-0.7.1/src/Configuration.cpp
+     // Check UID/GID of symlink is matching target
+-    if (scriptFile.getUser() != realScriptFile.getUser()
+-        || scriptFile.getGroup() != realScriptFile.getGroup()) {
++    if (config.getCheckSymlinkOwnership()
++        && (scriptFile.getUser() != realScriptFile.getUser()
++        || scriptFile.getGroup() != realScriptFile.getGroup())) {
+         std::string error = "UID or GID of symlink \"" + scriptFile.getPath()
+             + "\" is not matching its target";
+         logger.logWarning(error);
+diff -Nabur suphp-0.7.1.orig/src/Configuration.cpp suphp-0.7.1.symlinkpatch/src/Configuration.cpp
 --- suphp-0.7.1.orig/src/Configuration.cpp	2008-03-29 14:02:36.000000000 +0100
-+++ suphp-0.7.1/src/Configuration.cpp	2010-02-06 21:07:46.000000000 +0100
-@@ -92,6 +92,7 @@
-     this->allow_directory_group_writeable = false;
-     this->allow_file_others_writeable = false;
-     this->allow_directory_others_writeable = false;
-+    this->check_all_parent_directory_ownership = true;
- #ifdef OPT_DISABLE_CHECKPATH
-     this->check_vhost_docroot = false;
++++ suphp-0.7.1.symlinkpatch/src/Configuration.cpp	2010-02-06 22:33:38.000000000 +0100
+@@ -97,6 +97,7 @@
  #else
-@@ -141,6 +142,9 @@
-             else if (key == "allow_directory_others_writeable")
-                 this->allow_directory_others_writeable = 
+     this->check_vhost_docroot = true;
+ #endif
++    this->check_symlink_ownership = true;
+     this->errors_to_browser = false;
+     this->env_path = "/bin:/usr/bin";
+     this->loglevel = LOGLEVEL_INFO;
+@@ -143,6 +144,8 @@
                      this->strToBool(value);
-+            else if (key == "check_all_parent_directory_ownership")
-+                this->check_all_parent_directory_ownership = 
-+                    this->strToBool(value);
              else if (key == "check_vhost_docroot")
                  this->check_vhost_docroot = this->strToBool(value);
++            else if (key == "check_symlink_ownership")
++                this->check_symlink_ownership = this->strToBool(value);
              else if (key == "errors_to_browser")
-@@ -217,6 +221,10 @@
-     return this->allow_directory_others_writeable;
+                 this->errors_to_browser = this->strToBool(value);
+             else if (key == "env_path")
+@@ -201,6 +204,10 @@
+     return this->check_vhost_docroot;
  }
  
-+bool suPHP::Configuration::getCheckAllParentDirectoryOwnership() const {
-+    return this->check_all_parent_directory_ownership;
++bool suPHP::Configuration::getCheckSymlinkOwnership() const {
++    return this->check_symlink_ownership;
 +}
 +
- bool suPHP::Configuration::getErrorsToBrowser() const {
-     return this->errors_to_browser;
+ bool suPHP::Configuration::getAllowFileGroupWriteable() const {
+     return this->allow_file_group_writeable;
  }
-diff -Nabur suphp-0.7.1.orig/src/Configuration.hpp suphp-0.7.1/src/Configuration.hpp
+diff -Nabur suphp-0.7.1.orig/src/Configuration.hpp suphp-0.7.1.symlinkpatch/src/Configuration.hpp
 --- suphp-0.7.1.orig/src/Configuration.hpp	2008-03-29 14:02:36.000000000 +0100
-+++ suphp-0.7.1/src/Configuration.hpp	2010-02-06 21:04:59.000000000 +0100
-@@ -49,6 +49,7 @@
-         bool allow_directory_group_writeable;
++++ suphp-0.7.1.symlinkpatch/src/Configuration.hpp	2010-02-06 22:25:55.000000000 +0100
+@@ -50,6 +50,7 @@
          bool allow_file_others_writeable;
          bool allow_directory_others_writeable;
-+	bool check_all_parent_directory_ownership;
          bool check_vhost_docroot;
++        bool check_symlink_ownership;
          bool errors_to_browser;
          std::string env_path;
-@@ -132,6 +133,12 @@
-         bool getAllowDirectoryOthersWriteable() const;
- 
+         std::map<std::string, std::string> handlers;
+@@ -108,6 +109,12 @@
+         bool getCheckVHostDocroot() const;
+         
          /**
-+         * Returns whether suPHP should check ownership beyond the 
-+         * parent of the script.
++          * Returns whether suPHP should check if the owner UID and GID
++          * matches the UID and GID of the target file.
 +        */
-+        bool getCheckAllParentDirectoryOwnership() const;
-+
++        bool getCheckSymlinkOwnership() const;
++        
 +        /**
-          * Returns whether (minor) error message should be sent to browser
+          * Returns wheter suPHP should ignore the group write bit of
+          * the script file
           */
-         bool getErrorsToBrowser() const;
