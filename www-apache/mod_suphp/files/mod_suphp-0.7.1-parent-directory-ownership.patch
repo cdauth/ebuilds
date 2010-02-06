@@ -1,0 +1,101 @@
+diff -Nabur suphp-0.7.1.orig/doc/CONFIG suphp-0.7.1/doc/CONFIG
+--- suphp-0.7.1.orig/doc/CONFIG	2008-03-31 02:15:54.000000000 +0200
++++ suphp-0.7.1/doc/CONFIG	2010-02-06 21:02:32.000000000 +0100
+@@ -100,6 +100,9 @@
+   Is disabled by default:
+   WARNING: Enabling this option is dangerous!
+ 
++check_all_parent_directory_ownership:
++  Disable checking directory ownership beyond the parent of the script.
++
+ check_vhost_docroot:
+   Checks wheter the script is within DOCUMENT_ROOT specified by the 
+   webserver. This option is intended to avoid symbol links outside of the
+diff -Nabur suphp-0.7.1.orig/src/Application.cpp suphp-0.7.1/src/Application.cpp
+--- suphp-0.7.1.orig/src/Application.cpp	2009-03-14 18:55:25.000000000 +0100
++++ suphp-0.7.1/src/Application.cpp	2010-02-06 21:15:00.000000000 +0100
+@@ -544,11 +544,13 @@
+                                                const Configuration& config) const throw (SoftException) {
+     File directory = file;
+     Logger& logger = API_Helper::getSystemAPI().getSystemLogger();
++    bool checkDirOwnership = true;
+     do {
+         directory = directory.getParentDirectory();
+ 
+         UserInfo directoryOwner = directory.getUser();
+-        if (directoryOwner != owner && !directoryOwner.isSuperUser()) {
++        if (checkDirOwnership && directoryOwner != owner
++            && !directoryOwner.isSuperUser()) {
+             std::string error = "Directory " + directory.getPath()
+                 + " is not owned by " + owner.getUsername();
+             logger.logWarning(error);
+@@ -572,6 +574,13 @@
+             logger.logWarning(error);
+             throw SoftException(error, __FILE__, __LINE__);
+         }
++#ifdef OPT_USERGROUP_PARANOID
++	if(!config.getCheckAllParentDirectoryOwnership()) {
++		/* We have checked the parent 
++		 * of the script so quit*/
++		checkDirOwnership = false;
++	}
++#endif
+     } while (directory.getPath() != "/");
+ }
+ 
+diff -Nabur suphp-0.7.1.orig/src/Configuration.cpp suphp-0.7.1/src/Configuration.cpp
+--- suphp-0.7.1.orig/src/Configuration.cpp	2008-03-29 14:02:36.000000000 +0100
++++ suphp-0.7.1/src/Configuration.cpp	2010-02-06 21:07:46.000000000 +0100
+@@ -92,6 +92,7 @@
+     this->allow_directory_group_writeable = false;
+     this->allow_file_others_writeable = false;
+     this->allow_directory_others_writeable = false;
++    this->check_all_parent_directory_ownership = true;
+ #ifdef OPT_DISABLE_CHECKPATH
+     this->check_vhost_docroot = false;
+ #else
+@@ -141,6 +142,9 @@
+             else if (key == "allow_directory_others_writeable")
+                 this->allow_directory_others_writeable = 
+                     this->strToBool(value);
++            else if (key == "check_all_parent_directory_ownership")
++                this->check_all_parent_directory_ownership = 
++                    this->strToBool(value);
+             else if (key == "check_vhost_docroot")
+                 this->check_vhost_docroot = this->strToBool(value);
+             else if (key == "errors_to_browser")
+@@ -217,6 +221,10 @@
+     return this->allow_directory_others_writeable;
+ }
+ 
++bool suPHP::Configuration::getCheckAllParentDirectoryOwnership() const {
++    return this->check_all_parent_directory_ownership;
++}
++
+ bool suPHP::Configuration::getErrorsToBrowser() const {
+     return this->errors_to_browser;
+ }
+diff -Nabur suphp-0.7.1.orig/src/Configuration.hpp suphp-0.7.1/src/Configuration.hpp
+--- suphp-0.7.1.orig/src/Configuration.hpp	2008-03-29 14:02:36.000000000 +0100
++++ suphp-0.7.1/src/Configuration.hpp	2010-02-06 21:04:59.000000000 +0100
+@@ -49,6 +49,7 @@
+         bool allow_directory_group_writeable;
+         bool allow_file_others_writeable;
+         bool allow_directory_others_writeable;
++	bool check_all_parent_directory_ownership;
+         bool check_vhost_docroot;
+         bool errors_to_browser;
+         std::string env_path;
+@@ -132,6 +133,12 @@
+         bool getAllowDirectoryOthersWriteable() const;
+ 
+         /**
++         * Returns whether suPHP should check ownership beyond the 
++         * parent of the script.
++        */
++        bool getCheckAllParentDirectoryOwnership() const;
++
++        /**
+          * Returns whether (minor) error message should be sent to browser
+          */
+         bool getErrorsToBrowser() const;

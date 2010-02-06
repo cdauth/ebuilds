@@ -50,7 +50,7 @@ pkg_setup() {
 src_unpack() {
 	unpack "${A}"
 	cd "${S}"
-	epatch "${FILESDIR}/${P}-dirowner.patch"
+	epatch "${FILESDIR}/${P}-parent-directory-ownership.patch"
 }
 
 src_configure() {
