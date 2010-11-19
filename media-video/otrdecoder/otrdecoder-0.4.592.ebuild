@@ -15,7 +15,7 @@ IUSE=""
 DEPEND=""
 RDEPEND=""
 
-MY_WORKDIR="${WORKDIR}/otrdecoder-bin-linux-static-v${PV}"
+MY_WORKDIR="${WORKDIR}/otrdecoder-bin-i686-pc-linux-gnu-static-${PV}"
 
 src_install() {
 	dodoc "${MY_WORKDIR}/README.OTR"
