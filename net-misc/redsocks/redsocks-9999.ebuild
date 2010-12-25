@@ -18,7 +18,7 @@ RDEPEND="dev-libs/libevent
 	net-firewall/iptables"
 
 src_install() {
-	doexe redsocks
+	dobin redsocks
 	dodoc README doc/*
 	insinto /etc/redsocks
 	doins redsocks.conf.example
