@@ -1,0 +1,36 @@
+#!/sbin/runscript
+# Copyright 1999-2005 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Header: $
+
+TAPFILE=/etc/proxy65/proxy65.tap
+PIDFILE=/var/run/proxy65.pid
+
+depend() {
+	after jabber-server
+}
+
+check() {
+        if [ ! -f "${TAPFILE}" ]; then
+                eerror "Not starting proxy65 Jabber bytestream proxy - not configured."
+		eerror "Please run \"ebuild EBUILDPATH config\"."
+                return 1
+        fi
+}
+
+
+start() {
+	check || return 1
+	ebegin "Starting proxy65 Jabber bytestream proxy"
+	start-stop-daemon --start --pidfile="${PIDFILE}" --quiet	\
+		--startas /usr/bin/twistd --					\
+			--file="${TAPFILE}" --pidfile="${PIDFILE}"		\
+			--syslog --quiet --no_save
+	eend $?
+}
+
+stop() {
+	ebegin "Stopping proxy65 Jabber bytestream proxy"
+	start-stop-daemon --stop --quiet --pidfile "${PIDFILE}"
+	eend $?
+}
