@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<herd>no-herd</herd>
+	<maintainer>
+		<email>cdauth@cdauth.eu</email>
+		<name>Candid Dauth</name>
+	</maintainer>
+	<maintainer>
+		<email>tamino@cdauth.eu</email>
+		<name>Tamino Dauth</name>
+	</maintainer>
+	<longdescription lang="en">
+		This program can be used to decode files downloaded from http://www.onlinetvrecorder.com/.
+		It provides a GTK-based GUI version as well.
+	</longdescription>
+	<longdescription lang="de">
+		Dieses Programm kann dazu verwendet werden, Dateien, die von http://www.onlinetvrecorder.com/ heruntergeladen wurden zu dekodieren.
+		Es enthält außerdem eine GTK-basierte GUI-Version.
+	</longdescription>
+	<use>
+		<flag name="static" lang="en">Uses static build (consider that it doesn't seem to be linked statically with 
+		<pkg>sys-libs/glibc</pkg>).</flag>
+		<flag name="static" lang="de">Verwendet den statischen Build (beachten Sie, dass es nicht danach scheint mit <pkg>sys-libs/glibc</pkg> statisch gelinkt zu sein).</flag>
+		<flag name="gui" lang="en">Installs GUI version as well.</flag>
+		<flag name="gui" lang="de">Installiert zusätzlich die GUI-Version.</flag>
+	</use>
+</pkgmetadata>
