@@ -19,7 +19,6 @@ IUSE="+static +gui"
 
 DEPEND=""
 RDEPEND="gui? ( !static? (
-dev-lang/python:2
 dev-python/pygtk
 gnome-base/libglade
 ) )" # GUI dependencies according to "README.OTR" file
