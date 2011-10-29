@@ -25,6 +25,8 @@ gnome-base/libglade
 ) )" # GUI dependencies according to "README.OTR" file
 MERGE_TYPE="binary"
 
+S="${WORKDIR}"
+
 src_install() {
 
 	dodoc "${WORKDIR}/README.OTR"
