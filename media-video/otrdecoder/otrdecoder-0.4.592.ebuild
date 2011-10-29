@@ -31,7 +31,7 @@ else
 	MY_WORKDIR="${WORKDIR}/otrdecoder-bin-linux-Ubuntu_9.04-i686-${PV}"
 fi
 
-S="{MY_WORKDIR}"
+S="${MY_WORKDIR}"
 
 src_install() {
 
