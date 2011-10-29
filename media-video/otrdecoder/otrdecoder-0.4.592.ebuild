@@ -39,7 +39,10 @@ src_install() {
 	insinto "${DESTTREE}/share/${PN}"
 	doins "${MY_WORKDIR}"/decoder.glade
 	insopts -m0755
-	doins "${MY_WORKDIR}"/{otrdecoder,otrdecoder-gui}
+	doins "${MY_WORKDIR}/otrdecoder"
 	dosym "${INSDESTTREE}"/otrdecoder "${DESTTREE}"/bin/
-	dosym "${INSDESTTREE}"/otrdecoder-gui "${DESTTREE}"/bin/
+	if use gui; then
+		doins "${MY_WORKDIR}/otrdecoder-gui"
+		dosym "${INSDESTTREE}"/otrdecoder-gui "${DESTTREE}"/bin/
+	fi
 }
