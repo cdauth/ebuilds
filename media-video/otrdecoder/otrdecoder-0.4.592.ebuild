@@ -25,15 +25,21 @@ gnome-base/libglade
 ) )" # GUI dependencies according to "README.OTR" file
 MERGE_TYPE="binary"
 
-S="${WORKDIR}"
+if use static; then
+	MY_WORKDIR="${WORKDIR}/otrdecoder-bin-i686-pc-linux-gnu-static-${PV}"
+else
+	MY_WORKDIR="${WORKDIR}/otrdecoder-bin-linux-Ubuntu_9.04-i686-${PV}"
+fi
+
+S="{MY_WORKDIR}"
 
 src_install() {
 
-	dodoc "${WORKDIR}/README.OTR"
+	dodoc "${MY_WORKDIR}/README.OTR"
 	insinto "${DESTTREE}/share/${PN}"
-	doins "${WORKDIR}"/decoder.glade
+	doins "${MY_WORKDIR}"/decoder.glade
 	insopts -m0755
-	doins "${WORKDIR}"/{otrdecoder,otrdecoder-gui}
+	doins "${MY_WORKDIR}"/{otrdecoder,otrdecoder-gui}
 	dosym "${INSDESTTREE}"/otrdecoder "${DESTTREE}"/bin/
 	dosym "${INSDESTTREE}"/otrdecoder-gui "${DESTTREE}"/bin/
 }
