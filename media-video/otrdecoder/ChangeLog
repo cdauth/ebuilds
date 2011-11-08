@@ -1,0 +1,8 @@
+* otrdecoder-0.4.592
+      2011-10-29 Tamino Dauth <tamino@cdauth.eu> +otrdecoder-0.4.592.ebuild:
+      Fixed source directory.
+      GUI binary isn't installed anymore without using useflag "gui".
+      Dropped Python dependency since pygtk and libglade do already require specific Python versions.
+
+      2011-06-17; Tamino Dauth <tamino@cdauth.eu> +otrdecoder-0.4.592.ebuild:
+      Supports useflags "static" and "gui" now.
